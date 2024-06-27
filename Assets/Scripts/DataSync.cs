@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Newtonsoft.Json;
 using Firebase.Auth;
+using System.Collections.Generic;
 
 public class DataSync : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class DataSync : MonoBehaviour
 
     public DatabaseReference databaseRef;
 
-    public SavedData data;
+    public UserData userData;
+
+    public PastOrders ordersData;
 
     [SerializeField]
     private UpdateUI updateUI;
@@ -21,28 +24,41 @@ public class DataSync : MonoBehaviour
 
         DefaultInstance = this;
 
-        data = new SavedData();
+        userData = new UserData();
+
+        ordersData = new PastOrders();
+
+        ordersData.orders = new List<Order>();
     }
 
-    public void UploadData(SavedData Data)
+    public void UploadUserData(UserData Data)
     {
         string json = JsonConvert.SerializeObject(Data);
 
         string UserID = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
 
-        databaseRef.Child(UserID).SetRawJsonValueAsync(json);
+        databaseRef.Child("Users").Child(UserID).SetRawJsonValueAsync(json);
 
         Debug.Log(json);
     }
 
-    public void DownloadData()
+    public void UploadPastOrdersData()
+    {
+        string json = JsonConvert.SerializeObject(ordersData);
+
+        string UserID = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+
+        databaseRef.Child("PastOrders").Child(UserID).SetRawJsonValueAsync(json);
+    }
+
+    public void DownloadUserData()
     {
         StartCoroutine(DownloadDataEnum());
     }
 
     private IEnumerator DownloadDataEnum()
     {
-        var serverData = databaseRef.Child(FirebaseAuth.DefaultInstance.CurrentUser.UserId).GetValueAsync();
+        var serverData = databaseRef.Child("Users").Child(FirebaseAuth.DefaultInstance.CurrentUser.UserId).GetValueAsync();
 
         yield return new WaitUntil(predicate: () => serverData.IsCompleted);
 
@@ -52,7 +68,7 @@ public class DataSync : MonoBehaviour
 
         if (jsonData != null)
         {
-            data = JsonConvert.DeserializeObject<SavedData>(jsonData);
+            userData = JsonConvert.DeserializeObject<UserData>(jsonData);
         }
         else
         {
@@ -60,12 +76,37 @@ public class DataSync : MonoBehaviour
         }
 
         updateUI.UpdateName();
+    }
+
+    public void DownloadPastOrdersData()
+    {
+        StartCoroutine(DownloadPastOrdersDataEnum());
+    }
+
+    private IEnumerator DownloadPastOrdersDataEnum()
+    {
+        var serverData = databaseRef.Child("PastOrders").Child(FirebaseAuth.DefaultInstance.CurrentUser.UserId).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => serverData.IsCompleted);
+
+        DataSnapshot snapshot = serverData.Result;
+
+        string jsonData = snapshot.GetRawJsonValue();
+
+        if (jsonData != null)
+        {
+            userData = JsonConvert.DeserializeObject<UserData>(jsonData);
+        }
+        else
+        {
+            Debug.Log("No data has been found!");
+        }
 
         updateUI.UpdatePastOrders();
     }
 }
 
-public class SavedData 
+public class UserData 
 {
     public User CurrentUser;
 }
@@ -77,4 +118,18 @@ public class User
     public string lastName;
 
     public string phoneNo;
+}
+
+public class PastOrders 
+{
+    public List<Order> orders;
+}
+
+public class Order 
+{
+    public string orderName;
+
+    public string shippingAdresse;
+
+    public string price;
 }

@@ -26,8 +26,6 @@ public class EmailPassAuth : MonoBehaviour
 
     [SerializeField]
     private TMP_Text errorText;
-
-
     #endregion
 
     #region Methods
@@ -117,7 +115,9 @@ public class EmailPassAuth : MonoBehaviour
 
             panelsManager.SetLogInPanel(false);
 
-            DataSync.DefaultInstance.DownloadData();
+            DataSync.DefaultInstance.DownloadUserData();
+
+            DataSync.DefaultInstance.DownloadPastOrdersData();
 
             ClearInputFields();
         });
@@ -133,11 +133,11 @@ public class EmailPassAuth : MonoBehaviour
 
         newUser.phoneNo = phoneNo.text;
 
-        SavedData data = new SavedData();
+        UserData data = new UserData();
 
         data.CurrentUser = newUser;
 
-        DataSync.DefaultInstance.UploadData(data);
+        DataSync.DefaultInstance.UploadUserData(data);
     }
 
     public void ClearInputFields() 
