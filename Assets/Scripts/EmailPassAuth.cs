@@ -4,28 +4,33 @@ using Firebase.Auth;
 using UnityEngine;
 using Firebase;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class EmailPassAuth : MonoBehaviour
 {
     #region Fields
     [SerializeField]
-    private TMP_InputField signUpEmail, signUpPass;
+    private InputField signUpEmail, signUpPass;
 
     [SerializeField]
-    private TMP_InputField logInEmail, logInPass;
+    private InputField logInEmail, logInPass;
 
     [SerializeField]
-    private TMP_InputField firstName, lastName;
+    private InputField firstName, lastName;
 
     [SerializeField]
-    private TMP_InputField phoneNo;
+    private InputField phoneNo;
 
     [SerializeField]
     private PanelsManager panelsManager;
 
     [SerializeField]
     private TMP_Text errorText;
+
+    [SerializeField]
+    private PastOrdersController pastOrdersController;
+
     #endregion
 
     #region Methods
@@ -151,6 +156,10 @@ public class EmailPassAuth : MonoBehaviour
         lastName.text = "";
 
         phoneNo.text = "";
+
+        logInEmail.text = "";
+
+        logInPass.text = "";
     }
 
     public void Logout()
@@ -158,6 +167,8 @@ public class EmailPassAuth : MonoBehaviour
         errorText.gameObject.SetActive(false);
 
         FirebaseAuth.DefaultInstance.SignOut();
+
+        pastOrdersController.ClearPastOrders();
     }
     #endregion
 }

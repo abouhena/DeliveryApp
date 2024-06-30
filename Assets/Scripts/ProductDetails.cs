@@ -6,30 +6,26 @@ public class ProductDetails : MonoBehaviour
 {
 
     [SerializeField]
-    private TMP_Text productName;
+    private Text productName;
 
     [SerializeField]
-    private TMP_Text productPrice;
+    private Text productPrice;
 
-    [SerializeField]
-    private Image productImage;    
-    
     [SerializeField]
     private TMP_Text Name;
 
     [SerializeField]
     private TMP_Text Price;
 
-    [SerializeField]
-    private Image Image;
-
+    private void Start()
+    {
+        GetComponent<Button>().onClick.AddListener(() => { UpdateProductDetails(); });
+    }
 
     public void UpdateProductDetails()
     {
         Name.text = productName.text;
 
-        Price.text = "Total Price : " + productPrice.text;
-
-        Image.sprite = productImage.sprite;
+        Price.text = productPrice.text;
     }
 }

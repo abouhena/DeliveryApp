@@ -53,10 +53,10 @@ public class DataSync : MonoBehaviour
 
     public void DownloadUserData()
     {
-        StartCoroutine(DownloadDataEnum());
+        StartCoroutine(DownloadUserDataEnum());
     }
 
-    private IEnumerator DownloadDataEnum()
+    private IEnumerator DownloadUserDataEnum()
     {
         var serverData = databaseRef.Child("Users").Child(FirebaseAuth.DefaultInstance.CurrentUser.UserId).GetValueAsync();
 
@@ -95,7 +95,8 @@ public class DataSync : MonoBehaviour
 
         if (jsonData != null)
         {
-            userData = JsonConvert.DeserializeObject<UserData>(jsonData);
+
+            ordersData = JsonConvert.DeserializeObject<PastOrders>(jsonData);
         }
         else
         {

@@ -15,6 +15,12 @@ public class PanelsManager : MonoBehaviour
     [SerializeField]
     private CanvasGroup pastOrdersPanel, ordersPanel;
 
+    [SerializeField]
+    private CanvasGroup restaurantsPanel;
+
+    [SerializeField]
+    private Transform[] restaurants;
+
     public void SetSignUpPanel(bool State)
     {
         if (State)
@@ -110,6 +116,34 @@ public class PanelsManager : MonoBehaviour
             ordersPanel.interactable = false;
         }
     }
+
+    public void SetRestaurantPanel(bool State)
+    {
+        if (State)
+        {
+            StartCoroutine(FadeInOut(restaurantsPanel, 1));
+            restaurantsPanel.blocksRaycasts = true;
+            restaurantsPanel.interactable = true;
+                
+        }
+        else
+        {
+            StartCoroutine(FadeInOut(restaurantsPanel, 0));
+            restaurantsPanel.blocksRaycasts = false;
+            restaurantsPanel.interactable = false;
+        }
+    }
+
+    public void SetRestaurant(int index) 
+    {
+        foreach (var item in restaurants)
+        {
+            item.gameObject.SetActive(false);
+        }
+
+        restaurants[index].gameObject.SetActive(true);
+    }
+
 
     // Coroutine to increase/decrease the opcaity of specific canvas group
     private IEnumerator FadeInOut(CanvasGroup canvasGroup, float endValue)

@@ -7,34 +7,36 @@ public class UpdateUI : MonoBehaviour
     private TMP_Text firstName;
 
     [SerializeField]
-    private TMP_Text lastName;
-
-    [SerializeField]
     private GameObject orderItem;
 
     [SerializeField]
     private Transform parent;
 
+    [SerializeField]
+    private PastOrdersController pastOrderController;
+
     public void UpdateName()
     {
         firstName.text = DataSync.DefaultInstance.userData.CurrentUser.firstName;
-
-        lastName.text = DataSync.DefaultInstance.userData.CurrentUser.lastName;
     }
 
-    public void UpdatePastOrders() 
+    public void UpdatePastOrders()
     {
-        foreach (var item in DataSync.DefaultInstance.ordersData.orders)
+        pastOrderController.ClearPastOrders();
+
+        for (int i = 0; i < DataSync.DefaultInstance.ordersData.orders.Count; i++)
         {
+
             GameObject newOrder = Instantiate(orderItem, parent);
 
             OrderDetails newOrderDetails = newOrder.GetComponent<OrderDetails>();
 
-            newOrderDetails.OrderName = item.orderName;
-            
-            newOrderDetails.Price = item.price;
+            newOrderDetails.OrderName = DataSync.DefaultInstance.ordersData.orders[i].orderName;
 
-            newOrderDetails.ShippingAdresse = item.shippingAdresse;
+            newOrderDetails.Price = DataSync.DefaultInstance.ordersData.orders[i].price;
+
+            newOrderDetails.ShippingAdresse = DataSync.DefaultInstance.ordersData.orders[i].shippingAdresse;
+
         }
     }
 }
